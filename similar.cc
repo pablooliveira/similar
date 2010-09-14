@@ -57,7 +57,7 @@ void usage()
     exit(-1);
 }
 
-void index_file(Xapian::WritableDatabase db, Xapian::TermGenerator indexer,
+void index_file(Xapian::WritableDatabase &db, Xapian::TermGenerator indexer,
 		filesystem::path p)
 {
     filesystem::ifstream myfile (p);
@@ -87,7 +87,7 @@ void index_file(Xapian::WritableDatabase db, Xapian::TermGenerator indexer,
    (limitations: does not recurse into subdirectories,
                  stemmer is hardcoded to english)
 */
-void index_directory(Xapian::WritableDatabase db, filesystem::path directory)
+void index_directory(Xapian::WritableDatabase &db, filesystem::path directory)
 {
     Xapian::TermGenerator indexer;
     Xapian::Stem stemmer("english");
@@ -115,7 +115,7 @@ void index_directory(Xapian::WritableDatabase db, filesystem::path directory)
 }
 
 /* Populate the similarity graph */
-void populate_similarity_graph(Xapian::Database db,
+void populate_similarity_graph(Xapian::Database &db,
 			       int threshold, similarity_graph &graph)
 {
     /* Connect every document, to the other similar documents */
@@ -140,7 +140,7 @@ void populate_similarity_graph(Xapian::Database db,
 }
 
 /* Find and prints the strong connected components in the similarity graph */
-void find_strong_components(Xapian::Database db, similarity_graph &G)
+void find_strong_components(Xapian::Database &db, similarity_graph &G)
 {
     vector<int> component(num_vertices(G)), discover_time(num_vertices(G));
     vector<default_color_type> color(num_vertices(G));
@@ -194,15 +194,17 @@ int main( int argc, char* argv[] )
 	     << ")" << endl;
 	exit(-1);
     }
-    Xapian::WritableDatabase db(db_path.string(), Xapian::DB_CREATE_OR_OPEN);
+    Xapian::WritableDatabase * db = new Xapian::WritableDatabase(db_path.string(), Xapian::DB_CREATE_OR_OPEN);
 
     /* Index the files in the directory */
-    index_directory(db, path);
+    index_directory(*db, path);
 
     /* Create a similarity graph, and find its strong connected components */
-    similarity_graph graph(db.get_lastdocid()+1);
-    populate_similarity_graph(db,threshold,graph);
-    find_strong_components(db, graph);
+    similarity_graph graph(db->get_lastdocid()+1);
+    populate_similarity_graph(*db,threshold,graph);
+    find_strong_components(*db, graph);
+
+    delete db;
 
     /* Clean up Xapian db directory*/
     try {
