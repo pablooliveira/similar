@@ -24,15 +24,15 @@ usage: similar [path] [threshold]
 
 To build Similar you need to install the following libraries:
 
-    * libxapian-dev 
+* libxapian-dev 
 
-    * libboost-dev
+* libboost-dev
 
-    * libboost-filesystem-dev 
+* libboost-filesystem-dev 
 
-    * libboost-graph-dev
+* libboost-graph-dev
 
-    * libboost-system-dev
+* libboost-system-dev
 
 On Debian, you can type:
 
