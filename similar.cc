@@ -1,5 +1,5 @@
 // similar: find groups of similar text files in a directory.
-// Copyright Pablo de Oliveira Castro, 2010
+// Copyright (C) 2010,2012 Pablo de Oliveira Castro
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -62,12 +62,12 @@ void index_file(Xapian::WritableDatabase &db, Xapian::TermGenerator indexer,
 {
     filesystem::ifstream myfile (p);
     if (!myfile.is_open()) {
-	cerr << "\nUnable to open file: " << p.file_string() << endl;
+	cerr << "\nUnable to open file: " << p << endl;
     }
 
     try {
 	Xapian::Document doc;
-	doc.set_data(p.file_string());
+	doc.set_data(p.string());
 	indexer.set_document(doc);
 
 	string line;
@@ -183,14 +183,14 @@ int main( int argc, char* argv[] )
 
     /* Check that the given path is an existing directory */
     if ( !filesystem::exists(path) ||  !filesystem::is_directory(path)) {
-	cerr << "\nNot a directory: " << path.file_string() << endl;
+	cerr << "\nNot a directory: " << path << endl;
 	exit(-1);
     }
 
     /* Create a new database. */
     filesystem::path db_path =  path / DB_NAME;
     if (filesystem::exists(db_path)) {
-	cerr << "\nTemporary database already exists (" << db_path.file_string()
+	cerr << "\nTemporary database already exists (" << db_path
 	     << ")" << endl;
 	exit(-1);
     }
