@@ -45,5 +45,8 @@ $ sudo apt-get install libxapian-dev libboost-dev libboost-filesystem-dev libboo
 After installing dependencies, just type
 
 ~~~
-$ make
+$ ./autogen.sh
+$ ./configure
+$ make 
+$ make install
 ~~~
